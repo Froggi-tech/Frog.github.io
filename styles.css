@@ -1,0 +1,226 @@
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body { 
+    font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 15px;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+    color: #2c3e50;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #1e3799;
+    text-align: center;
+    padding: 15px 0;
+    margin-bottom: 20px;
+    font-size: 24px;
+    line-height: 1.3;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: #74b9ff;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* Стили вопросов */
+.question { 
+    margin-bottom: 15px;
+    padding: 20px;
+    border: none;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.question:hover {
+    transform: translateY(-2px);
+}
+
+.question h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.options { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px;
+}
+
+/* Стили кнопок */
+button { 
+    padding: 15px 20px;
+    margin: 2px 0;
+    cursor: pointer; 
+    border: none;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+button:hover {
+    background-color: #74b9ff;
+    color: white;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button:disabled {
+    background-color: #f8f9fa;
+    color: #a0a0a0;
+    cursor: default;
+    transform: none;
+    opacity: 0.7;
+}
+
+.answered button { 
+    pointer-events: none;
+}
+
+.answered button.selected {
+    background-color: #74b9ff;
+    color: white;
+}
+
+/* Стили результата */
+#result { 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+    padding: 20px;
+    display: none;
+    text-align: center;
+    font-size: 1.1em;
+    line-height: 1.6;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+#result h2 {
+    font-size: 24px;
+    color: #1e3799;
+    margin: 20px 0;
+}
+
+#result h3 {
+    font-size: 20px;
+    color: #0984e3;
+    margin: 15px 0;
+    padding: 10px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+#result p {
+    max-width: 100%;
+    margin: 15px auto;
+    font-size: 16px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: left;
+}
+
+/* Прогресс бар */
+.progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #f0f0f0;
+    z-index: 1000;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #74b9ff;
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+/* Медиа запросы для мобильных устройств */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 20px;
+        padding: 10px 0;
+    }
+
+    .question {
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+
+    .question h3 {
+        font-size: 16px;
+    }
+
+    button {
+        padding: 12px 15px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    #result {
+        padding: 15px;
+    }
+
+    #result h2 {
+        font-size: 20px;
+    }
+
+    #result h3 {
+        font-size: 18px;
+    }
+
+    #result p {
+        font-size: 15px;
+        padding: 15px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.question {
+    animation: fadeIn 0.5s ease forwards;
+}
