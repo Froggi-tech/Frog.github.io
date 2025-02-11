@@ -1,0 +1,125 @@
+body { 
+    font-family: Arial, sans-serif; 
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    background-color: #f0f8ff; /* Светло-голубой фон */
+    color: #2c3e50; /* Темно-синий текст */
+}
+
+h1 {
+    color: #1e3799; /* Насыщенный синий */
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #74b9ff; /* Голубая линия */
+}
+
+.question { 
+    margin-bottom: 20px; 
+    padding: 20px; 
+    border: 2px solid #74b9ff; /* Голубая рамка */
+    border-radius: 10px; 
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.question h3 {
+    color: #0984e3; /* Яркий синий */
+    margin-bottom: 15px;
+}
+
+.options { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+
+button { 
+    padding: 12px 20px; 
+    margin: 5px; 
+    cursor: pointer; 
+    border: none;
+    border-radius: 5px;
+    background-color: #74b9ff; /* Голубой */
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #0984e3; /* Темнее голубой при наведении */
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #bdc3c7; /* Серый для неактивных кнопок */
+    cursor: not-allowed;
+    transform: none;
+}
+
+.answered button { 
+    background-color: #dfe6e9; /* Светло-серый для отвеченных вопросов */
+}
+
+#result { 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%); /* Градиент */
+    padding: 40px;
+    display: none;
+    text-align: center;
+    font-size: 1.2em;
+    line-height: 1.6;
+    overflow-y: auto;
+}
+
+#result h2 {
+    font-size: 2.5em;
+    color: #1e3799; /* Насыщенный синий */
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+#result h3 {
+    font-size: 2em;
+    color: #0984e3; /* Яркий синий */
+    margin-bottom: 20px;
+}
+
+#result p {
+    max-width: 600px;
+    margin: 20px auto;
+    font-size: 1.2em;
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    button {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    #result h2 {
+        font-size: 2em;
+    }
+    
+    #result h3 {
+        font-size: 1.5em;
+    }
+    
+    #result p {
+        font-size: 1em;
+        padding: 15px;
+    }
+}
