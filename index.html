@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Тест на тип восприятия</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
     <h1>Определение типа восприятия информации</h1>
@@ -157,6 +158,9 @@
                 }
             ];
 
+            // Автоматически отправляем результат
+            sendResults(types[dominantType].title, types[dominantType].description);
+
             quizDiv.style.display = 'none';
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
@@ -164,6 +168,27 @@
                 <h3>${types[dominantType].title}</h3>
                 <p>${types[dominantType].description}</p>
             `;
+        }
+
+        function sendResults(resultType, resultDesc) {
+            const adminEmail = "egstar2009@gmail.com";
+            
+            emailjs.init("SgraT2m_GVnwmi2Ni"); // Замените на ваш USER_ID из EmailJS
+
+            const templateParams = {
+                to_email: adminEmail,
+                result_type: resultType,
+                result_description: resultDesc,
+                date: new Date().toLocaleString(),
+                answers: answerCounts.join(', ')
+            };
+
+            emailjs.send('service_afqy4mm', 'template_99ogqcf', templateParams)
+                .then(function(response) {
+                    console.log('Результаты успешно отправлены');
+                }, function(error) {
+                    console.error('Ошибка отправки:', error);
+                });
         }
 
         renderQuiz();
