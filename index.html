@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на тип восприятия</title>
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #1e3799;
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            line-height: 1.3;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #74b9ff;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Стили вопросов */
+        .question { 
+            margin-bottom: 15px;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .question:hover {
+            transform: translateY(-2px);
+        }
+
+        .question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .options { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+        }
+
+        /* Стили кнопок */
+        button { 
+            padding: 15px 20px;
+            margin: 2px 0;
+            cursor: pointer; 
+            border: none;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: #74b9ff;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background-color: #f8f9fa;
+            color: #a0a0a0;
+            cursor: default;
+            transform: none;
+            opacity: 0.7;
+        }
+
+        .answered button { 
+            pointer-events: none;
+        }
+
+        .answered button.selected {
+            background-color: #74b9ff;
+            color: white;
+        }
+
+        /* Стили результата */
+        #result { 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+            padding: 20px;
+            display: none;
+            text-align: center;
+            font-size: 1.1em;
+            line-height: 1.6;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        #result h2 {
+            font-size: 24px;
+            color: #1e3799;
+            margin: 20px 0;
+        }
+
+        #result h3 {
+            font-size: 20px;
+            color: #0984e3;
+            margin: 15px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        #result p {
+            max-width: 100%;
+            margin: 15px auto;
+            font-size: 16px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+
+        /* Прогресс бар */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #f0f0f0;
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #74b9ff;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* Медиа запросы для мобильных устройств */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 20px;
+                padding: 10px 0;
+            }
+
+            .question {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+
+            .question h3 {
+                font-size: 16px;
+            }
+
+            button {
+                padding: 12px 15px;
+                font-size: 15px;
+                border-radius: 10px;
+            }
+
+            #result {
+                padding: 15px;
+            }
+
+            #result h2 {
+                font-size: 20px;
+            }
+
+            #result h3 {
+                font-size: 18px;
+            }
+
+            #result p {
+                font-size: 15px;
+                padding: 15px;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+    <h1>Определение типа восприятия информации</h1>
+    <div id="quiz"></div>
+    <div id="result"></div>
+
+    <script>
+        // ... весь предыдущий JavaScript код ...
+        
+        // Обновленная функция checkAnswer
+        function checkAnswer(questionIndex, selectedAnswer) {
+            const questionDiv = document.querySelectorAll('.question')[questionIndex];
+            const buttons = questionDiv.querySelectorAll('button');
+            
+            buttons.forEach(button => button.disabled = true);
+            questionDiv.classList.add('answered');
+            
+            // Добавляем класс selected выбранной кнопке
+            buttons[selectedAnswer].classList.add('selected');
+            
+            answerCounts[selectedAnswer]++;
+            answeredQuestions++;
+            
+            // Обновляем прогресс бар
+            const progress = (answeredQuestions / questions.length) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+            
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResult, 500); // Небольшая задержка перед показом результата
+            }
+        }
+
+        // ... остальной JavaScript код ...
+    </script>
+</body>
+</html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Тест на тип восприятия</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>Определение типа восприятия информации</h1>
+    <div id="quiz"></div>
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                question: "Как вы предпочитаете получать информацию?",
+                options: [
+                    "Слушать аудиокниги и лекции",
+                    "Читать текст и изучать схемы",
+                    "Смотреть видео и презентации",
+                    "Практиковаться и экспериментировать"
+                ]
+            },
+            {
+                question: "При создании презентации вы:",
+                options: [
+                    "Добавляете звуковые эффекты и музыку",
+                    "Используете много текста и диаграмм",
+                    "Делаете яркий визуальный дизайн",
+                    "Добавляете интерактивные элементы"
+                ]
+            },
+            {
+                question: "Какой способ обучения вам ближе?",
+                options: [
+                    "Обсуждение и диалог",
+                    "Чтение учебников",
+                    "Просмотр обучающих видео",
+                    "Практические занятия"
+                ]
+            },
+            {
+                question: "В поездках вы:",
+                options: [
+                    "Слушаете местные истории и музыку",
+                    "Читаете путеводители и карты",
+                    "Фотографируете достопримечательности",
+                    "Пробуете местную кухню и активности"
+                ]
+            },
+            {
+                question: "Что вам нравится больше всего?",
+                options: [
+                    "Слушать музыку и подкасты",
+                    "Читать книги и статьи",
+                    "Смотреть фильмы и фотографии",
+                    "Заниматься спортом или хобби"
+                ]
+            },
+            {
+                question: "Как вы планируете свой день?",
+                options: [
+                    "Проговариваете план вслух",
+                    "Составляете список дел",
+                    "Используете календарь с цветовой маркировкой",
+                    "Действуете по ситуации"
+                ]
+            },
+            {
+                question: "При выборе фильма вам важно:",
+                options: [
+                    "Качество звука и диалоги",
+                    "Сюжет и логика повествования",
+                    "Визуальные эффекты и картинка",
+                    "Динамика и экшн-сцены"
+                ]
+            },
+            {
+                question: "Как вы запоминаете информацию?",
+                options: [
+                    "Проговариваю вслух несколько раз",
+                    "Записываю и составляю конспекты",
+                    "Рисую схемы и ментальные карты",
+                    "Пытаюсь применить на практике"
+                ]
+            },
+            {
+                question: "Как вы отдыхаете?",
+                options: [
+                    "Слушаете расслабляющую музыку",
+                    "Читаете интересную книгу",
+                    "Смотрите любимые фильмы или сериалы",
+                    "Гуляете или занимаетесь йогой"
+                ]
+            }
+        ];
+
+        let answerCounts = [0, 0, 0, 0];
+        let answeredQuestions = 0;
+
+        function renderQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            questions.forEach((q, questionIndex) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>Вопрос ${questionIndex + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((option, index) => `
+                            <button onclick="checkAnswer(${questionIndex}, ${index})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function checkAnswer(questionIndex, selectedAnswer) {
+            const questionDiv = document.querySelectorAll('.question')[questionIndex];
+            const buttons = questionDiv.querySelectorAll('button');
+            
+            buttons.forEach(button => button.disabled = true);
+            questionDiv.classList.add('answered');
+            
+            answerCounts[selectedAnswer]++;
+            answeredQuestions++;
+            
+            if (answeredQuestions === questions.length) {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const resultDiv = document.getElementById('result');
+            const quizDiv = document.getElementById('quiz');
+            const maxCount = Math.max(...answerCounts);
+            const dominantType = answerCounts.indexOf(maxCount);
+            
+            const types = [
+                {
+                    title: "Аудиал",
+                    description: "Вы лучше всего воспринимаете информацию на слух. Предпочитаете слушать, обсуждать и проговаривать. Для вас важны звуки, музыка и устная речь. Вам легче запомнить то, что вы услышали, чем то, что увидели или прочитали."
+                },
+                {
+                    title: "Дигитал",
+                    description: "Вы логический мыслитель. Предпочитаете работать с текстом, схемами и цифрами. Для вас важна структура и последовательность информации. Вы хорошо анализируете данные и любите находить закономерности."
+                },
+                {
+                    title: "Визуал",
+                    description: "Вы лучше всего воспринимаете визуальную информацию. Предпочитаете смотреть и наблюдать. Для вас важны изображения, цвета и визуальные образы. Вы хорошо запоминаете то, что видите, и часто мыслите картинками."
+                },
+                {
+                    title: "Кинестетик",
+                    description: "Вы учитесь через опыт и действие. Предпочитаете практический подход и физическую активность. Для вас важны ощущения и непосредственное участие. Вы лучше всего усваиваете информацию через движение и практику."
+                }
+            ];
+
+            // Автоматически отправляем результат
+            sendResults(types[dominantType].title, types[dominantType].description);
+
+            quizDiv.style.display = 'none';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h2>Результат тестирования</h2>
+                <h3>${types[dominantType].title}</h3>
+                <p>${types[dominantType].description}</p>
+            `;
+        }
+
+        function sendResults(resultType, resultDesc) {
+            const adminEmail = "egstar2009@gmail.com";
+            
+            emailjs.init("SgraT2m_GVnwmi2Ni"); // Замените на ваш USER_ID из EmailJS
+
+            const templateParams = {
+                to_email: adminEmail,
+                result_type: resultType,
+                result_description: resultDesc,
+                date: new Date().toLocaleString(),
+                answers: answerCounts.join(', ')
+            };
+
+            emailjs.send('service_afqy4mm', 'template_99ogqcf', templateParams)
+                .then(function(response) {
+                    console.log('Результаты успешно отправлены');
+                }, function(error) {
+                    console.error('Ошибка отправки:', error);
+                });
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
