@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на тип восприятия</title>
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #1e3799;
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            line-height: 1.3;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #74b9ff;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .question { 
+            margin-bottom: 15px;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .options { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+
+        button { 
+            padding: 12px 20px; 
+            border: none;
+            border-radius: 10px;
+            background-color: #74b9ff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        button:hover {
+            background-color: #0984e3;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .answered button { 
+            opacity: 0.7;
+        }
+
+        .answered button.selected {
+            background-color: #0984e3;
+            opacity: 1;
+        }
+
+        #result { 
+            display: none;
+            padding: 30px;
+            text-align: center;
+        }
+
+        /* Стили для прогресс бара */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #74b9ff;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* Стили для формы обратной связи */
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feedback-question textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #74b9ff;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .feedback-question textarea:focus {
+            outline: none;
+            border-color: #0984e3;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+
+        .submit-feedback {
+            background-color: #74b9ff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+            text-align: center;
+        }
+
+        .submit-feedback:hover {
+            background-color: #0984e3;
+            transform: translateY(-2px);
+        }
+
+        .submit-feedback:active {
+            transform: translateY(1px);
+        }
+
+        .submit-feedback:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Стили для отображения результата обратной связи */
+        .feedback-result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .feedback-result h4 {
+            color: #1e3799;
+            margin-bottom: 10px;
+        }
+
+        .feedback-result p {
+            font-style: italic;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .submit-feedback {
+                padding: 10px 20px;
+                font-size: 14px;
+                width: 100%;
+            }
+            
+            textarea {
+                min-height: 100px;
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+    <h1>Определение типа восприятия информации</h1>
+    <div id="quiz"></div>
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                question: "Как вы предпочитаете получать новую информацию?",
+                options: [
+                    "Слушать аудиокниги и лекции",
+                    "Читать текст и изучать схемы",
+                    "Смотреть видео и презентации",
+                    "Практиковаться и экспериментировать"
+                ]
+            },
+            {
+                question: "Как вы лучше запоминаете номер телефона?",
+                options: [
+                    "Проговаривая его вслух несколько раз",
+                    "Записывая и перечитывая",
+                    "Представляя расположение цифр на клавиатуре",
+                    "Набирая его несколько раз"
+                ]
+            },
+            {
+                question: "Что вам помогает расслабиться?",
+                options: [
+                    "Слушать музыку или звуки природы",
+                    "Читать книгу или решать головоломки",
+                    "Смотреть фильмы или фотографии",
+                    "Заниматься спортом или хобби"
+                ]
+            },
+            {
+                question: "Как вы планируете свой день?",
+                options: [
+                    "Проговариваете план вслух",
+                    "Составляете список дел",
+                    "Используете календарь с цветовой маркировкой",
+                    "Действуете по ситуации"
+                ]
+            },
+            {
+                question: "При выборе фильма вам важно:",
+                options: [
+                    "Качество звука и диалоги",
+                    "Сюжет и логика повествования",
+                    "Визуальные эффекты и картинка",
+                    "Динамика и экшн-сцены"
+                ]
+            },
+            {
+                question: "Как вы предпочитаете учить иностранные слова?",
+                options: [
+                    "Повторяя их вслух",
+                    "Записывая и составляя списки",
+                    "Используя карточки с картинками",
+                    "Применяя в разговоре"
+                ]
+            },
+            {
+                question: "Что вам больше помогает при решении проблемы?",
+                options: [
+                    "Обсуждение с другими",
+                    "Анализ и логическое мышление",
+                    "Визуализация решения",
+                    "Метод проб и ошибок"
+                ]
+            },
+            {
+                question: "Как вы лучше понимаете инструкции?",
+                options: [
+                    "Когда их объясняют устно",
+                    "Читая пошаговое руководство",
+                    "Глядя на схемы и иллюстрации",
+                    "Пробуя сделать самостоятельно"
+                ]
+            },
+            {
+                question: "Что вам помогает сосредоточиться?",
+                options: [
+                    "Тихая музыка или белый шум",
+                    "Четкий план действий",
+                    "Порядок на рабочем месте",
+                    "Смена положения тела или места"
+                ]
+            }
+        ];
+
+        let answerCounts = [0, 0, 0, 0];
+        let answeredQuestions = 0;
+                function renderQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            questions.forEach((q, questionIndex) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>Вопрос ${questionIndex + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((option, index) => `
+                            <button onclick="checkAnswer(${questionIndex}, ${index})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+
+            // Добавляем текстовый вопрос с кнопкой отправки
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'question feedback-question';
+            feedbackDiv.innerHTML = `
+                <h3>Вопрос 10: Как ты запоминаешь информацию, дай свой совет? <span style="color: red;">*</span></h3>
+                <div class="feedback-form">
+                    <textarea 
+                        id="userFeedback" 
+                        placeholder="Это поле обязательно для заполнения. Поделитесь своим опытом..."
+                        onblur="validateFeedback(this)"
+                    ></textarea>
+                    <button onclick="submitFeedback()" class="submit-feedback">
+                        Отправить ответ
+                    </button>
+                </div>
+            `;
+            quizContainer.appendChild(feedbackDiv);
+        }
+
+        function validateFeedback(textarea) {
+            if (!textarea.value.trim()) {
+                textarea.style.borderColor = '#ff4444';
+            } else {
+                textarea.style.borderColor = '#74b9ff';
+            }
+        }
+
+        function checkAnswer(questionIndex, selectedAnswer) {
+            const questionDiv = document.querySelectorAll('.question')[questionIndex];
+            const buttons = questionDiv.querySelectorAll('button');
+            
+            buttons.forEach(button => button.disabled = true);
+            buttons[selectedAnswer].classList.add('selected');
+            questionDiv.classList.add('answered');
+            
+            answerCounts[selectedAnswer]++;
+            answeredQuestions++;
+            
+            // Обновляем прогресс бар
+            const progress = (answeredQuestions / questions.length) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function submitFeedback() {
+            const userFeedback = document.getElementById('userFeedback').value.trim();
+            
+            if (!userFeedback) {
+                alert('Пожалуйста, напишите ваш ответ перед отправкой');
+                document.getElementById('userFeedback').focus();
+                return;
+            }
+
+            // Деактивируем кнопку и текстовое поле после отправки
+            document.getElementById('userFeedback').disabled = true;
+            document.querySelector('.submit-feedback').disabled = true;
+            document.querySelector('.submit-feedback').textContent = 'Ответ отправлен ✓';
+            
+            // Проверяем, все ли вопросы отвечены
+            if (answeredQuestions === questions.length) {
+                showResult(userFeedback); // Передаем ответ в функцию showResult
+            } else {
+                alert('Пожалуйста, ответьте на все вопросы теста');
+            }
+        }        function showResult(userFeedback) {
+            const resultDiv = document.getElementById('result');
+            const quizDiv = document.getElementById('quiz');
+            const maxCount = Math.max(...answerCounts);
+            const dominantType = answerCounts.indexOf(maxCount);
+            
+            const types = [
+                {
+                    title: "Аудиал",
+                    description: "Вы лучше всего воспринимаете информацию на слух. Предпочитаете слушать, обсуждать и проговаривать. Для вас важны звуки, музыка и устная речь. Вам легче запомнить то, что вы услышали, чем то, что увидели или прочитали."
+                },
+                {
+                    title: "Дигитал",
+                    description: "Вы логический мыслитель. Предпочитаете работать с текстом, схемами и цифрами. Для вас важна структура и последовательность информации. Вы хорошо анализируете данные и любите находить закономерности."
+                },
+                {
+                    title: "Визуал",
+                    description: "Вы лучше всего воспринимаете визуальную информацию. Предпочитаете смотреть и наблюдать. Для вас важны изображения, цвета и визуальные образы. Вы хорошо запоминаете то, что видите, и часто мыслите картинками."
+                },
+                {
+                    title: "Кинестетик",
+                    description: "Вы учитесь через опыт и действие. Предпочитаете практический подход и физическую активность. Для вас важны ощущения и непосредственное участие. Вы лучше всего усваиваете информацию через движение и практику."
+                }
+            ];
+
+            // Отправляем результаты вместе с ответом на 10-й вопрос
+            sendResults(types[dominantType].title, types[dominantType].description, userFeedback);
+
+            quizDiv.style.display = 'none';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h2>Результат тестирования</h2>
+                <h3>${types[dominantType].title}</h3>
+                <p>${types[dominantType].description}</p>
+                <div class="feedback-result">
+                    <h4>Ваш совет по запоминанию информации:</h4>
+                    <p>${userFeedback}</p>
+                </div>
+            `;
+        }
+
+        function sendResults(resultType, resultDesc, userFeedback) {
+            const adminEmail = "egstar2009@gmail.com";
+            
+            emailjs.init("SgraT2m_GVnwmi2Ni");
+
+            const templateParams = {
+                to_email: adminEmail,
+                result_type: resultType,
+                result_description: resultDesc,
+                date: new Date().toLocaleString(),
+                answers: answerCounts.join(', '),
+                user_feedback: userFeedback // Теперь точно отправляется
+            };
+
+            emailjs.send('service_afqy4mm', 'template_99ogqcf', templateParams)
+                .then(function(response) {
+                    console.log('Результаты успешно отправлены', templateParams);
+                }, function(error) {
+                    console.error('Ошибка отправки:', error);
+                });
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
